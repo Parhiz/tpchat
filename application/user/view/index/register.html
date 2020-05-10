@@ -1,0 +1,126 @@
+{include file="common/head" title="注册-PARHIZ" keywords="南海出椿"/}
+<div style="margin: 50px auto;">
+    <form id="formTab">
+        <div class="container">
+            {:token()}
+            <div class="form-group row">
+                <label for="inputEmail4" class="col-3" style="text-align: right">Email</label>
+                <input type="email" name="email" class="form-control col-4" id="inputEmail4" placeholder="请输入用于接收注册的邮箱账号">
+                <button type="button" onclick="sendEmail($(this))" class="btn btn-primary col-2">Send</button>
+            </div>
+
+            <div class="form-group row" id="tips" style="display: none;">
+                <label for="inputEmail5" class="col-3" style="text-align: right">Email-Code</label>
+                <input type="text" name="email_code" class="form-control col-6" id="inputEmail5" placeholder="邮件验证码有效期十二小时，如未收到请查看垃圾邮箱！">
+            </div>
+
+            <div class="form-group row" >
+                <label for="inputNickname4" class="col-3" style="text-align: right">Nickname</label>
+                <input type="text" name="nickname" class="form-control col-6" id="inputNickname4" placeholder="请输入您的昵称">
+            </div>
+
+            <div class="form-group row">
+                <label for="inputPassword4" class="col-3" style="text-align: right">Password</label>
+                <input type="password" name="passwd" class="form-control col-6" id="inputPassword4" placeholder="请输入您的密码">
+            </div>
+            <div class="form-group row">
+                <label for="inputPasswordContrast4" class="col-3" style="text-align: right">Confirm Password</label>
+                <input type="password" name="passwds" class="form-control col-6" id="inputPasswordContrast4" placeholder="请确认您的昵称">
+            </div>
+            <div class="form-group row" >
+                <label for="inputState" class="col-3" style="text-align: right">Type</label>
+                <select id="inputState" name="user_type" class="form-control col-6">
+                    <option selected>1</option>
+                    <option>2</option>
+                </select>
+            </div>
+            <div class="form-group row" style="margin-top: 40px;">
+                <label class="col-3"></label>
+                <button type="button" onclick="submitRes()" class="btn btn-success col-2">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!--弹出框-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">提示</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">YES</button>
+            </div>
+        </div>
+    </div>
+</div>
+<button type="button" id="showInfo" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="display: none">
+    Launch demo modal
+</button>
+
+<script language="JavaScript">
+    //邮件发送
+    function sendEmail(obj) {
+        //触发
+        var email = $("input[name='email']").val();
+        if (!email){
+            tips("注意填写正确的邮箱各式！");
+            return false;
+        }
+        $.ajax({
+            url:"{:url('index/sendEmail')}?email="+email,
+            success:function (res) {
+                $("#tips").css("display","flex");
+                if (res.code){
+                    tips(res.msg);
+                    return false;
+                }else{
+                    console.log(res.msg);
+                    obj.text('发送成功');
+                    obj.removeClass("btn-primary");
+                    obj.addClass("btn-secondary");
+                    obj.attr('disabled','disabled');
+                }
+            }
+        });
+    }
+
+    //注册提交
+    function submitRes() {
+        var form_data = $("#formTab").serializeArray();
+        $.ajax({
+            url:"{:url('index/register')}",
+            type:'post',
+            data:form_data,
+            success(res){
+                console.log(res);
+                  if (res.code){
+                    tips(res.msg);
+                    return false;
+                }else{
+                    tips(res.msg);
+                    setTimeout(function () {
+                        window.location.href="{:url('index/index')}";
+                    },1000*2)
+                }
+            }
+        })
+    }
+
+    //提示层
+    function tips(content) {
+        $(".modal-body").text(content);
+        $("#showInfo").click();
+    }
+</script>
+
+<div style="margin-top: 200px;">
+    {include file="common/footer" /}
+</div>

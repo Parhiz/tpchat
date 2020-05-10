@@ -1,0 +1,151 @@
+
+{include file="common/head" title="首页-PARHIZ" keywords="南海出椿"/}
+<div class="pos-f-t">
+    <div class="collapse" id="navbarToggleExternalContent">
+        <div class="bg-dark p-4">
+            <h5 class="text-white h4">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Welcome</a>
+                    </li>
+                    <li class="nav-item" data-toggle="modal" data-target="#exampleModalCenter">
+                        <a class="nav-link" href="#">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{:url('index/register')}">Register</a>
+                    </li>
+                </ul>
+            </h5>
+            <span class="text-muted">The paranoid. chat-room</span>
+        </div>
+    </div>
+    <nav class="navbar navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!--导航右侧-->
+
+        <!--end-->
+        <span class="navbar-text">
+
+        </span>
+    </nav>
+</div>
+
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="/static/img/001.jpg" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item ">
+            <img src="/static/img/002.jpg" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item ">
+            <img src="/static/img/004.jpg" class="d-block w-100" alt="...">
+        </div>
+    </div>
+</div>
+
+
+<div class="jumbotron">
+    <h1 class="display-4">Hello, world!</h1>
+    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <hr class="my-4">
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+</div>
+
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <h1 class="display-4">Fluid jumbotron</h1>
+        <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+    </div>
+</div>
+
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <h1 class="display-4">Fluid jumbotron</h1>
+        <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+    </div>
+</div>
+
+<!--登陆弹出层 start-->
+<div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">LOGIN</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form id="formTab">
+                <div class="modal-body">
+                    {:token()}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" name="passwd" class="form-control" id="exampleInputPassword1">
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" name="remember" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Remember me</label>
+                    </div>
+                    <div class="form-group" id="tips" style="display: none;color: indianred;font-size: 12pt;font-weight: bolder;">
+                        提示
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" onclick="loginSubmit()" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!--登陆弹出层 end-->
+
+<script language="JavaScript">
+    function loginSubmit() {
+        var formData = $("#formTab").serializeArray();
+        //验证
+        var isForm=0;
+        for(let i=0;i<formData.length;i++){
+            if (formData[i].name === 'email' || formData[i].name === 'passwd'){
+
+                if (formData[i].value === ""){
+                    tips("Pay attention to the integrity of landing information.");
+                    return false;
+                }else{
+                    isForm++;
+                }
+            }
+        }
+        if (isForm !== 2){tips("Network error, please refresh and try again.")};
+        //提交
+        $.ajax({
+            type:"post",
+            url:"{:url('index/index')}",
+            data:formData,
+            success:function (res) {
+                if (res.code){
+                    window.location.href=res.url;
+                }else{
+                    tips(res.msg);
+                    return false;
+                }
+            }
+        })
+    }
+
+    function tips(content) {
+        $("#tips").css('display','block');
+        $("#tips").text(content);
+    }
+</script>
+{include file="common/footer" /}
